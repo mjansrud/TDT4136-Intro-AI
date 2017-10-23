@@ -110,9 +110,53 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
       Your minimax agent (question 2)
     """
+    pacmanIndex = 0
 
-    def evaluationFunction(self, currentGameState, action):
-        "*** YOUR CODE HERE ***"
+    def maxValue(self, state, depth):
+
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction(state), "None"
+
+        scoreList = []
+        highestScore = -float("inf")
+        pacmanLegalMoves = state.getLegalActions(self.pacmanIndex)
+
+        for pacmanLegalMove in pacmanLegalMoves:
+            for ghostIndex in range(1, state.getNumAgents() - 1):
+                scoreList.append(self.minValue(state.generatePacmanSuccessor(pacmanLegalMove), depth, ghostIndex))
+
+        highestScore = max(scoreList)
+        bestIndices = [index for index in range(len(scoreList)) if scoreList[index] == highestScore]
+        chosenIndex = random.choice(bestIndices)
+        return highestScore, pacmanLegalMoves[chosenIndex]
+
+    def minValueManager(self):
+
+
+
+    def minValue(self, state, depth, ghostIndex):
+
+        if depth==0 or state.isWin() or state.isLose():
+          return self.evaluationFunction(state), "None"
+
+        scoreList = []
+        lowestScore = float("inf")
+        ghostLegalMoves = state.getLegalActions(ghostIndex)
+
+        for gostLocalMove in ghostLegalMoves:
+            if (ghostIndex == state.getNumAgents() - 1):
+                scoreList.append(self.maxValue(state.generatePacmanSuccessor(gostLocalMove), depth - 1))
+            else:
+                scoreList.append(self.minValue(state.generateSuccessor(ghostIndex, gostLocalMove), depth, ghostIndex))
+
+        lowestScore = min(scoreList)
+        worstIndices = [index for index in range(len(scoreList)) if scoreList[index] == lowestScore]
+        chosenIndex = random.choice(worstIndices)
+        return lowestScore, ghostLegalMoves[chosenIndex]
+
+        return lowestScore
+
+
 
     def getAction(self, gameState):
         """
@@ -131,7 +175,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"
+        bestScore, bestMove= self.maxValue(gameState,self.depth)
+        return bestMove
+
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
