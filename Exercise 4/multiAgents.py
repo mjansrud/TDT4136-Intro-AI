@@ -205,11 +205,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 highestScore = score
                 bestAction = action
 
-            if score >= beta:
-                break
-
-            alpha = max(alpha, score)
-
         print "As a result i chose: ", bestAction
         return bestAction
 
@@ -224,10 +219,10 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), depth, 1, alpha, beta)
             highestScore = max(highestScore, score)
-            alpha = max(alpha, score)
             if score >= beta:
                 return highestScore
 
+            alpha = max(alpha, score)
             print "Score: " + str(score) + ", alpha:" + str(alpha) + ", beta:" + str(beta)
 
         return highestScore
