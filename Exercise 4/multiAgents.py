@@ -192,10 +192,12 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     def AlphaBeta(self, state):
         bestAction = "Stop"
         bestScore = -float("inf")
+        alpha = -float("inf")
+        beta = float("inf")
         legalActions = state.getLegalActions(self.pacmanIndex)
 
         for action in legalActions:
-            score = self.minValue(state.generateSuccessor(0, action), self.depth, 1)
+            score = self.minValue(state.generateSuccessor(0, action), self.depth, 1, alpha, beta)
             print "Going: ", action, " gave a score of: ", score
             if score > bestScore:
                 bestScore = score
