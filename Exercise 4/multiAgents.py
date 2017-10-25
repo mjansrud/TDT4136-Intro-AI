@@ -48,7 +48,6 @@ class ReflexAgent(Agent):
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
-        print "SVARER " + legalMoves[chosenIndex]
         return legalMoves[chosenIndex]
 
     def evaluationFunction(self, currentGameState, action):
@@ -119,12 +118,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), self.depth, 1)
-            print "Going: ", action, " gave a score of: ", score
             if score > highestScore:
                 highestScore = score
                 bestAction = action
 
-        print "As a result i chose: ", bestAction
         return bestAction
 
     def maxValue(self, state, depth):
@@ -138,8 +135,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), depth, 1)
             highestScore = max(highestScore, score)
-            if depth == 2:
-                print "By going: ", action, " i got the score: ", score
 
         return highestScore
 
@@ -177,7 +172,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        print " "
         return self.MiniMax(gameState)
 
         util.raiseNotDefined()
@@ -199,7 +193,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), self.depth, 1, alpha, beta)
-            print "Going: ", action, " gave a score of: ", score
 
             if score > highestScore:
                 highestScore = score
@@ -210,13 +203,11 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
             alpha = max(alpha, score)
 
-        print "As a result i chose: ", bestAction
         return bestAction
 
     def maxValue(self, state, depth, alpha, beta):
 
         if depth == 0 or state.isWin() or state.isLose():
-            #print "Score: " + str(self.evaluationFunction(state)) + ", alpha:" + str(alpha) + ", beta:" + str(beta)
             return self.evaluationFunction(state)
 
         legalActions = state.getLegalActions(self.pacmanIndex)
@@ -234,7 +225,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     def minValue(self, state, depth, agentindex, alpha, beta):
         if depth==0 or state.isWin() or state.isLose():
-            #print "Score: " + str(self.evaluationFunction(state)) + ", alpha:" + str(alpha) + ", beta:" + str(beta)
             return self.evaluationFunction(state)
 
         lowestScore = float("inf")
