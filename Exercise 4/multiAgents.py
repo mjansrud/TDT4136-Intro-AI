@@ -48,7 +48,7 @@ class ReflexAgent(Agent):
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
-
+        print "SVARER " + legalMoves[chosenIndex]
         return legalMoves[chosenIndex]
 
     def evaluationFunction(self, currentGameState, action):
@@ -112,47 +112,55 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     pacmanIndex = 0
 
+    def MiniMax(self, state):
+        BestAction = "Stop"
+        BestScore = -float("inf")
+        possibleActions = state.getLegalActions(0)
+
+
+        for action in possibleActions:
+            temp = self.minValue(state.generateSuccessor(0, action), self.depth, 1)
+            print "going: ", action, " gave a score of: ", temp
+            if temp > BestScore:
+                BestScore = temp
+                BestAction = action
+
+        print "As a result i chose: ", BestAction
+        return BestAction
+
     def maxValue(self, state, depth):
+     #   print "Starter Max runde med dybde: " , depth
 
         if depth == 0 or state.isWin() or state.isLose():
-            return self.evaluationFunction(state), "None"
+            return self.evaluationFunction(state)
 
-        scoreList = []
-        highestScore = -float("inf")
-        pacmanLegalMoves = state.getLegalActions(self.pacmanIndex)
+        legalActions = state.getLegalActions(0)
+        HighestScore = -float("inf")
+        BestAction = legalActions[0]
 
-        for pacmanLegalMove in pacmanLegalMoves:
-            for ghostIndex in range(1, state.getNumAgents() - 1):
-                scoreList.append(self.minValue(state.generatePacmanSuccessor(pacmanLegalMove), depth, ghostIndex))
+        for EachAction in legalActions:
+            svaret = self.minValue(state.generateSuccessor(0, EachAction), depth, 1)
+            HighestScore = max(HighestScore, svaret)
+            if depth == 2:
+                print "by going: ", EachAction, " i got the score: ", svaret
 
-        highestScore = max(scoreList)
-        bestIndices = [index for index in range(len(scoreList)) if scoreList[index] == highestScore]
-        chosenIndex = random.choice(bestIndices)
-        return highestScore, pacmanLegalMoves[chosenIndex]
-
-    def minValueManager(self):
+        return HighestScore
 
 
-
-    def minValue(self, state, depth, ghostIndex):
-
+    def minValue(self, state, depth, agentindex):
         if depth==0 or state.isWin() or state.isLose():
-          return self.evaluationFunction(state), "None"
+            return self.evaluationFunction(state)
 
-        scoreList = []
         lowestScore = float("inf")
-        ghostLegalMoves = state.getLegalActions(ghostIndex)
-
-        for gostLocalMove in ghostLegalMoves:
-            if (ghostIndex == state.getNumAgents() - 1):
-                scoreList.append(self.maxValue(state.generatePacmanSuccessor(gostLocalMove), depth - 1))
-            else:
-                scoreList.append(self.minValue(state.generateSuccessor(ghostIndex, gostLocalMove), depth, ghostIndex))
-
-        lowestScore = min(scoreList)
-        worstIndices = [index for index in range(len(scoreList)) if scoreList[index] == lowestScore]
-        chosenIndex = random.choice(worstIndices)
-        return lowestScore, ghostLegalMoves[chosenIndex]
+        legalActions =  state.getLegalActions(agentindex)
+        if agentindex == (state.getNumAgents()-1):
+            for EachAction in legalActions:
+                svaret = self.maxValue(state.generateSuccessor(agentindex, EachAction), depth-1)
+                lowestScore = min(lowestScore, svaret)
+        else:
+            for EachAction in legalActions:
+                svaret = self.minValue(state.generateSuccessor(agentindex, EachAction), depth, agentindex+1)
+                lowestScore = min(lowestScore, svaret)
 
         return lowestScore
 
@@ -175,8 +183,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        bestScore, bestMove= self.maxValue(gameState,self.depth)
-        return bestMove
+        print " "
+        return self.MiniMax(gameState)
 
         util.raiseNotDefined()
 
