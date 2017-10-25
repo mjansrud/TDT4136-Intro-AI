@@ -151,12 +151,12 @@ class MinimaxAgent(MultiAgentSearchAgent):
         legalActions =  state.getLegalActions(agentindex)
         if agentindex == (state.getNumAgents()-1):
             for action in legalActions:
-                svaret = self.maxValue(state.generateSuccessor(agentindex, action), depth-1)
-                lowestScore = min(lowestScore, svaret)
+                score = self.maxValue(state.generateSuccessor(agentindex, action), depth-1)
+                lowestScore = min(lowestScore, score)
         else:
             for action in legalActions:
-                svaret = self.minValue(state.generateSuccessor(agentindex, action), depth, agentindex+1)
-                lowestScore = min(lowestScore, svaret)
+                score = self.minValue(state.generateSuccessor(agentindex, action), depth, agentindex+1)
+                lowestScore = min(lowestScore, score)
 
         return lowestScore
 
@@ -200,48 +200,58 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), self.depth, 1, alpha, beta)
             print "Going: ", action, " gave a score of: ", score
+
             if score > highestScore:
                 highestScore = score
                 bestAction = action
 
+            if score >= beta:
+                break
+
+            alpha = max(alpha, score)
+
         print "As a result i chose: ", bestAction
         return bestAction
 
-    def maxValue(self, state, depth):
+    def maxValue(self, state, depth, alpha, beta):
 
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
         legalActions = state.getLegalActions(self.pacmanIndex)
         highestScore = -float("inf")
-        alpha = -float("inf")
-        beta = float("inf")
 
         for action in legalActions:
-            score = self.minValue(state.generateSuccessor(0, action), depth, 1)
+            score = self.minValue(state.generateSuccessor(0, action), depth, 1, alpha, beta)
             highestScore = max(highestScore, score)
-            if depth == 2:
-                print "By going: ", action, " i got the score: ", score
+            alpha = max(alpha, score)
+            if score >= beta:
+                return highestScore
+
+            print "Score: " + str(score) + ", alpha:" + str(alpha) + ", beta:" + str(beta)
 
         return highestScore
 
-    def minValue(self, state, depth, agentindex):
+    def minValue(self, state, depth, agentindex, alpha, beta):
         if depth==0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
         lowestScore = float("inf")
         legalActions =  state.getLegalActions(agentindex)
-        alpha = -float("inf")
-        beta = float("inf")
 
-        if agentindex == (state.getNumAgents()-1):
-            for action in legalActions:
-                svaret = self.maxValue(state.generateSuccessor(agentindex, action), depth-1)
-                lowestScore = min(lowestScore, svaret)
-        else:
-            for action in legalActions:
-                svaret = self.minValue(state.generateSuccessor(agentindex, action), depth, agentindex+1)
-                lowestScore = min(lowestScore, svaret)
+        for action in legalActions:
+            if agentindex == (state.getNumAgents()-1):
+                score = self.maxValue(state.generateSuccessor(agentindex, action), depth-1, alpha, beta)
+                lowestScore = min(lowestScore, score)
+            else:
+                score = self.minValue(state.generateSuccessor(agentindex, action), depth, agentindex+1, alpha, beta)
+                lowestScore = min(lowestScore, score)
+
+            if lowestScore <= alpha:
+                return lowestScore
+
+            beta = min(beta, score)
+            print "Score: " + str(score) + ", alpha:" + str(alpha) + ", beta:" + str(beta)
 
         return lowestScore
 
