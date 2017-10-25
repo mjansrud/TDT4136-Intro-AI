@@ -115,14 +115,13 @@ class MinimaxAgent(MultiAgentSearchAgent):
     def MiniMax(self, state):
         BestAction = "Stop"
         BestScore = -float("inf")
-        possibleActions = state.getLegalActions(0)
+        legalActions = state.getLegalActions(self.pacmanIndex)
 
-
-        for action in possibleActions:
-            temp = self.minValue(state.generateSuccessor(0, action), self.depth, 1)
-            print "going: ", action, " gave a score of: ", temp
-            if temp > BestScore:
-                BestScore = temp
+        for action in legalActions:
+            score = self.minValue(state.generateSuccessor(0, action), self.depth, 1)
+            print "going: ", action, " gave a score of: ", score
+            if score > BestScore:
+                BestScore = score
                 BestAction = action
 
         print "As a result i chose: ", BestAction
@@ -134,15 +133,15 @@ class MinimaxAgent(MultiAgentSearchAgent):
         if depth == 0 or state.isWin() or state.isLose():
             return self.evaluationFunction(state)
 
-        legalActions = state.getLegalActions(0)
+        legalActions = state.getLegalActions(self.pacmanIndex)
         HighestScore = -float("inf")
         BestAction = legalActions[0]
 
         for EachAction in legalActions:
-            svaret = self.minValue(state.generateSuccessor(0, EachAction), depth, 1)
-            HighestScore = max(HighestScore, svaret)
+            score = self.minValue(state.generateSuccessor(0, EachAction), depth, 1)
+            HighestScore = max(HighestScore, score)
             if depth == 2:
-                print "by going: ", EachAction, " i got the score: ", svaret
+                print "by going: ", EachAction, " i got the score: ", score
 
         return HighestScore
 
@@ -193,11 +192,64 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
       Your minimax agent with alpha-beta pruning (question 3)
     """
 
+    pacmanIndex = 0
+
+    def AlphaBeta(self, state):
+        BestAction = "Stop"
+        BestScore = -float("inf")
+        legalActions = state.getLegalActions(self.pacmanIndex)
+
+        for action in legalActions:
+            score = self.minValue(state.generateSuccessor(0, action), self.depth, 1)
+            print "going: ", action, " gave a score of: ", score
+            if score > BestScore:
+                BestScore = score
+                BestAction = action
+
+        print "As a result i chose: ", BestAction
+        return BestAction
+
+    def maxValue(self, state, depth):
+        #   print "Starter Max runde med dybde: " , depth
+
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+
+        legalActions = state.getLegalActions(self.pacmanIndex)
+        HighestScore = -float("inf")
+        BestAction = legalActions[0]
+
+        for EachAction in legalActions:
+            score = self.minValue(state.generateSuccessor(0, EachAction), depth, 1)
+            HighestScore = max(HighestScore, score)
+            if depth == 2:
+                print "by going: ", EachAction, " i got the score: ", score
+
+        return HighestScore
+
+    def minValue(self, state, depth, agentindex):
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+
+        lowestScore = float("inf")
+        legalActions = state.getLegalActions(agentindex)
+        if agentindex == (state.getNumAgents() - 1):
+            for EachAction in legalActions:
+                svaret = self.maxValue(state.generateSuccessor(agentindex, EachAction), depth - 1)
+                lowestScore = min(lowestScore, svaret)
+        else:
+            for EachAction in legalActions:
+                svaret = self.minValue(state.generateSuccessor(agentindex, EachAction), depth, agentindex + 1)
+                lowestScore = min(lowestScore, svaret)
+
+        return lowestScore
+
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
+        return self.AlphaBeta(gameState)
         util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
