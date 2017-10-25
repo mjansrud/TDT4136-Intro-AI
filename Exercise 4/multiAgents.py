@@ -43,8 +43,8 @@ class ReflexAgent(Agent):
 
         # Choose one of the best actions
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
-        bestScore = max(scores)
-        bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        highestScore = max(scores)
+        bestIndices = [index for index in range(len(scores)) if scores[index] == highestScore]
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
@@ -114,14 +114,14 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     def MiniMax(self, state):
         bestAction = "Stop"
-        bestScore = -float("inf")
+        highestScore = -float("inf")
         legalActions = state.getLegalActions(self.pacmanIndex)
 
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), self.depth, 1)
             print "Going: ", action, " gave a score of: ", score
-            if score > bestScore:
-                bestScore = score
+            if score > highestScore:
+                highestScore = score
                 bestAction = action
 
         print "As a result i chose: ", bestAction
@@ -191,16 +191,17 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
     def AlphaBeta(self, state):
         bestAction = "Stop"
-        bestScore = -float("inf")
+
+        legalActions = state.getLegalActions(self.pacmanIndex)
+        highestScore = -float("inf")
         alpha = -float("inf")
         beta = float("inf")
-        legalActions = state.getLegalActions(self.pacmanIndex)
 
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), self.depth, 1, alpha, beta)
             print "Going: ", action, " gave a score of: ", score
-            if score > bestScore:
-                bestScore = score
+            if score > highestScore:
+                highestScore = score
                 bestAction = action
 
         print "As a result i chose: ", bestAction
@@ -213,6 +214,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         legalActions = state.getLegalActions(self.pacmanIndex)
         highestScore = -float("inf")
+        alpha = -float("inf")
+        beta = float("inf")
 
         for action in legalActions:
             score = self.minValue(state.generateSuccessor(0, action), depth, 1)
@@ -228,6 +231,9 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         lowestScore = float("inf")
         legalActions =  state.getLegalActions(agentindex)
+        alpha = -float("inf")
+        beta = float("inf")
+
         if agentindex == (state.getNumAgents()-1):
             for action in legalActions:
                 svaret = self.maxValue(state.generateSuccessor(agentindex, action), depth-1)
