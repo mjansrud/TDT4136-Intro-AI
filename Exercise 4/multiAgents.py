@@ -217,7 +217,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         legalActions = state.getLegalActions(self.pacmanIndex)
         HighestScore = -float("inf")
-        BestAction = legalActions[0]
 
         for EachAction in legalActions:
             score = self.minValue(state.generateSuccessor(0, EachAction), depth, 1)
