@@ -15,6 +15,9 @@ class CSP:
         # the variable pair (i, j)
         self.constraints = {}
 
+        self.backtracks = 0
+        self.failures = 0
+
     def add_variable(self, name, domain):
         """Add a new variable to the CSP. 'name' is the variable name
         and 'domain' is a list of the legal values for the variable.
@@ -109,6 +112,15 @@ class CSP:
         assignments and inferences that took place in previous
         iterations of the loop.
         """
+
+        #Check if we are finished
+
+
+        print(assignment)
+        return [];
+        print("Running backtrack")
+
+        self.backtrack += 1;
         # TODO: IMPLEMENT THIS
         pass
 
@@ -128,6 +140,16 @@ class CSP:
         is the initial queue of arcs that should be visited.
         """
         # TODO: IMPLEMENT THIS
+
+        while queue:
+            (x_i, x_j)  = queue.pop()
+
+            if(self.revise(assignment, x_i, x_j)):
+                if not len(assignment[x_i]):
+                    return False
+                #for x_k in self.get_all_neighboring_arcs(x_i)
+
+
         pass
 
     def revise(self, assignment, i, j):
@@ -139,8 +161,14 @@ class CSP:
         between i and j, the value should be deleted from i's list of
         legal values in 'assignment'.
         """
+        #constrains = list(self.constraints[i][j])
+        revised = False
+
+        #for (i, j) in assignment:
+
+
         # TODO: IMPLEMENT THIS
-        pass
+        return revised
 
 def create_map_coloring_csp():
     """Instantiate a CSP representing the map coloring problem from the
@@ -192,11 +220,25 @@ def print_sudoku_solution(solution):
     the method CSP.backtracking_search(), into a human readable
     representation.
     """
-    for row in range(9):
-        for col in range(9):
-            print solution['%d-%d' % (row, col)][0],
-            if col == 2 or col == 5:
-                print '|',
-        print
-        if row == 2 or row == 5:
-            print '------+-------+------'
+    if(len(solution)):
+        for row in range(9):
+            for col in range(9):
+                print solution['%d-%d' % (row, col)][0],
+                if col == 2 or col == 5:
+                    print '|',
+            print
+            if row == 2 or row == 5:
+                print '------+-------+------'
+    else:
+        print "No solution"
+
+"""
+Run code
+"""
+
+csp = create_sudoku_csp("puzzles/easy.txt")
+print_sudoku_solution(csp.backtracking_search())
+
+#Debug information
+print 'Backtrack calls: ', csp.backtracks
+print 'Backtrack failures: ', csp.failures
