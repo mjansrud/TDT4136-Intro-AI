@@ -1,0 +1,85 @@
+====== easy.txt ======
+
+7 8 4 | 9 3 2 | 1 5 6
+6 1 9 | 4 8 5 | 3 2 7
+2 3 5 | 1 7 6 | 4 8 9
+------+-------+------
+5 7 8 | 2 6 1 | 9 3 4
+3 4 1 | 8 9 7 | 5 6 2
+9 2 6 | 5 4 3 | 8 7 1
+------+-------+------
+4 5 3 | 7 2 9 | 6 1 8
+8 6 2 | 3 1 4 | 7 9 5
+1 9 7 | 6 5 8 | 2 4 3
+Backtrack calls:  0
+Backtrack failures:  0
+
+/*
+  Algoritmen finner en løsning på første forsøk, man slipper å gjette verdier
+*/
+
+===== medium.txt =====
+
+Running backtrack
+Attempt failed - rolling back
+Running backtrack
+8 7 5 | 9 3 6 | 1 4 2
+1 6 9 | 7 2 4 | 3 8 5
+2 4 3 | 8 5 1 | 6 7 9
+------+-------+------
+4 5 2 | 6 9 7 | 8 3 1
+9 8 6 | 4 1 3 | 2 5 7
+7 3 1 | 5 8 2 | 9 6 4
+------+-------+------
+5 1 7 | 3 6 9 | 4 2 8
+6 2 8 | 1 4 5 | 7 9 3
+3 9 4 | 2 7 8 | 5 1 6
+Backtrack calls:  2
+Backtrack failures:  1
+
+/*
+  Relativt enkel, algoritmen feiler men henter seg inn på kort tid.
+  Vi har valgt å ikke velge en random verdi, men det første som kommer i domenet.
+  Derfor blir alle forsøkene like på samme brett.
+*/
+
+====== hard.txt ======
+
+1 5 2 | 3 4 6 | 8 9 7
+4 3 7 | 1 8 9 | 6 5 2
+6 8 9 | 5 7 2 | 3 1 4
+------+-------+------
+8 2 1 | 6 3 7 | 9 4 5
+5 4 3 | 8 9 1 | 7 2 6
+9 7 6 | 4 2 5 | 1 8 3
+------+-------+------
+7 9 8 | 2 5 3 | 4 6 1
+3 6 5 | 9 1 4 | 2 7 8
+2 1 4 | 7 6 8 | 5 3 9
+Backtrack calls:  3
+Backtrack failures:  2
+
+/*
+  Omtrent samme som medium, men måtte backtracke en gang ekstra
+*/
+
+==== veryhard.txt ====
+
+4 3 1 | 8 6 7 | 9 2 5
+6 5 2 | 4 9 1 | 3 8 7
+8 9 7 | 5 3 2 | 1 6 4
+------+-------+------
+3 8 4 | 9 7 6 | 5 1 2
+5 1 9 | 2 8 4 | 7 3 6
+2 7 6 | 3 1 5 | 8 4 9
+------+-------+------
+9 4 3 | 7 2 8 | 6 5 1
+7 6 5 | 1 4 3 | 2 9 8
+1 2 8 | 6 5 9 | 4 7 3
+Backtrack calls:  42
+Backtrack failures:  87
+
+/*
+  En vanskelig oppgave hvor man er nødt til å gjette verdier, kopiere brettet og prøve på nytt.
+  Med dette brettet tok det vesentlig flere forsøk enn de tidligere for å finne en løsning
+*/
