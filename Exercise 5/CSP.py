@@ -15,8 +15,9 @@ class CSP:
         # the variable pair (i, j)
         self.constraints = {}
 
-        self.backtracks = 0
-        self.failures = 0
+        # Counters
+        self.counter_backtracks = 0
+        self.counter_failures = 0
 
     def add_variable(self, name, domain):
         """Add a new variable to the CSP. 'name' is the variable name
@@ -113,16 +114,23 @@ class CSP:
         iterations of the loop.
         """
 
-        #Check if we are finished
 
+        if all(map(lambda l: len(l) == 1, assignment.itervalues())):
+            return assignment
 
-        print(assignment)
-        return [];
         print("Running backtrack")
+        self.counter_backtracks += 1
+        unassigned_arc = self.select_unassigned_variable(assignment)
 
-        self.backtrack += 1;
-        # TODO: IMPLEMENT THIS
-        pass
+        for value in assignment[unassigned_arc]:
+            assignment_copy = copy.deepcopy(assignment)
+            assignment_copy[unassigned_arc] = [value]
+            if self.inference(assignment_copy, self.get_all_neighboring_arcs(unassigned_arc)):
+                result = self.backtrack(assignment_copy)
+                if result:
+                    return result
+
+        return False
 
     def select_unassigned_variable(self, assignment):
         """The function 'Select-Unassigned-Variable' from the pseudocode
@@ -130,8 +138,12 @@ class CSP:
         in 'assignment' that have not yet been decided, i.e. whose list
         of legal values has a length greater than one.
         """
-        # TODO: IMPLEMENT THIS
-        pass
+
+        for arc in assignment:
+            if (len(assignment[arc]) > 1):
+                return arc
+
+        return False
 
     def inference(self, assignment, queue):
         """The function 'AC-3' from the pseudocode in the textbook.
@@ -139,20 +151,28 @@ class CSP:
         the lists of legal values for each undecided variable. 'queue'
         is the initial queue of arcs that should be visited.
         """
-        # TODO: IMPLEMENT THIS
+
+        """
+          x_i = The point (row, col) to check
+          x_j = One of the points included in the constraints for that specific point
+        """
 
         while queue:
             (x_i, x_j)  = queue.pop()
 
             if(self.revise(assignment, x_i, x_j)):
                 if not len(assignment[x_i]):
+                    print("Attempt failed - rolling back")
+                    self.counter_failures += 1
                     return False
-                #for x_k in self.get_all_neighboring_arcs(x_i)
 
+                for (k_x_i, k_x_j) in self.get_all_neighboring_arcs(x_i):
+                    if k_x_i not in (x_i, x_j):
+                        queue.append((k_x_i, x_i))
 
-        pass
+        return True
 
-    def revise(self, assignment, i, j):
+    def revise(self, assignment, x_i, x_j):
         """The function 'Revise' from the pseudocode in the textbook.
         'assignment' is the current partial assignment, that contains
         the lists of legal values for each undecided variable. 'i' and
@@ -161,13 +181,22 @@ class CSP:
         between i and j, the value should be deleted from i's list of
         legal values in 'assignment'.
         """
-        #constrains = list(self.constraints[i][j])
+
+        constrains = list(self.constraints[x_i][x_j])
         revised = False
 
-        #for (i, j) in assignment:
+        for x in assignment[x_i]:
+            remove = True
+            for y in assignment[x_j]:
+                if (x,y) in constrains:
+                    remove = False
+            if remove:
+                assignment[x_i].remove(x)
+                revised = True
 
-
-        # TODO: IMPLEMENT THIS
+        #if revised:
+        #     print (x_i)
+        #    print assignment[x_i]
         return revised
 
 def create_map_coloring_csp():
@@ -236,9 +265,9 @@ def print_sudoku_solution(solution):
 Run code
 """
 
-csp = create_sudoku_csp("puzzles/easy.txt")
+csp = create_sudoku_csp("puzzles/veryhard.txt")
 print_sudoku_solution(csp.backtracking_search())
 
 #Debug information
-print 'Backtrack calls: ', csp.backtracks
-print 'Backtrack failures: ', csp.failures
+print 'Backtrack calls: ', csp.counter_backtracks
+print 'Backtrack failures: ', csp.counter_failures
